@@ -16,7 +16,10 @@ workout=pd.read_csv('workout_df.csv')
 Precaution=pd.read_csv('symptom_precaution.csv')
 
 
-st.title('Disease Prediction and Medical Recommendation')
+#Title
+st.title('Disease Prediction And Medical Recommender System')
+
+
 
 symtom_df={'itching':0, 'skin_rash':1, 'nodal_skin_eruptions':2,
        'continuous_sneezing':3, 'shivering':4, 'chills':5, 'joint_pain':6,
@@ -62,9 +65,13 @@ symtom_df={'itching':0, 'skin_rash':1, 'nodal_skin_eruptions':2,
        'yellow_crust_ooze':131}
 disease_df={15:'Fungal infection',4:'Allergy',16:'GERD',9:'Chronic cholestasis' ,14:'Drug Reaction',33:'Peptic ulcer diseae',1:'AIDS',12:'Diabetes',17:'Gastroenteritis',6:'Bronchial Asthma',23:'Hypertension' ,30:'Migraine' ,7:'Cervical spondylosis',32:'Paralysis (brain hemorrhage)',28:'Jaundice',29:'Malaria',8:'Chicken pox',11:'Dengue',37:'Typhoid',40:'hepatitis A',19:'Hepatitis B',20:'Hepatitis C',21:'Hepatitis D',22:'Hepatitis E',3:'Alcoholic hepatitis',36:'Tuberculosis',10:'Common Cold',34:'Pneumonia',13:'Dimorphic hemmorhoids(piles)',18:'Heart attack',39:'Varicose veins',26:'Hypothyroidism',24:'Hyperthyroidism',25:'Hypoglycemia',31:'Osteoarthristis',5:'Arthritis',0:'(vertigo) Paroymsal  Positional Vertigo',2:'Acne',38:'Urinary tract infection',35:'Psoriasis',27:'Impetigo'}
 
-text=st.text_input("Enter Symptom")
+text=st.text_input("Enter Symptoms")
+text=text.lower()
 if st.button('Predict'):
    if text !='':
+        col1,col2=st.columns(2,gap='Large')
+        col3, col4  =st.columns(2)
+        col5, col6 = st.columns(2)
         def get(text):
             arr = np.zeros(len(symtom_df) + 1)
             for i in range(0, len(text)):
@@ -72,39 +79,43 @@ if st.button('Predict'):
             vector = arr
             dis = disease_df[lr.predict(vector.reshape(1, -1))[0]]
             desc = Description[Description['Disease'] == dis]['Description']
-            st.title('Disease')
-            st.write(dis.upper())
+            with col1:
+                st.header('Disease')
+                st.write(dis.upper())
 
-            st.title('Description')
-            st.write(desc.values[0].upper())
-            medicine = medi[medi['Disease'] == dis]['Medication']
-            medicine = medicine[medicine.index[0]]
-            k = ast.literal_eval(medicine)
-            st.title('Medications')
-            for i in range(len(k)):
-                   st.write(i+1,k[i].upper())
+            with col2:
+                st.header('Description')
+                st.write(desc.values[0].upper())
 
-            st.title('Precautions')
-            prec = Precaution[Precaution['Disease'] == dis].iloc[:,1:].values[0]
-            p=1
-            for i in (prec):
-               st.write(p,i.upper())
-               p=p+1
+            with col3:
+                medicine = medi[medi['Disease'] == dis]['Medication']
+                medicine = medicine[medicine.index[0]]
+                k = ast.literal_eval(medicine)
+                st.header('Medications')
+                for i in range(len(k)):
+                       st.write(i+1,k[i].upper())
+            with col4:
+                st.header('Precautions')
+                prec = Precaution[Precaution['Disease'] == dis].iloc[:,1:].values[0]
+                p=1
+                for i in (prec):
+                   st.write(p,i.upper())
+                   p=p+1
 
-            st.title('Diets')
-            Diet=diets[diets['Disease'] == dis]['Diet']
-            Diet=Diet[Diet.index[0]]
-            d=ast.literal_eval(Diet)
-            for i in range(len(d)):
-                   st.write(i+1,d[i].upper())
-
-            st.title('Work-Out')
-            work = workout[workout['disease'] == dis]['workout']
-            c=1
-            for i in (work.sort_values()):
-                st.write(c,i.upper())
-                c=c+1
-
+            with col5:
+                st.header('Diets')
+                Diet=diets[diets['Disease'] == dis]['Diet']
+                Diet=Diet[Diet.index[0]]
+                d=ast.literal_eval(Diet)
+                for i in range(len(d)):
+                       st.write(i+1,d[i].upper())
+            with col6:
+                st.header('Work-Out')
+                work = workout[workout['disease'] == dis]['workout']
+                c=1
+                for i in (work.sort_values()):
+                    st.write(c,i.upper())
+                    c=c+1
 
 
 
@@ -113,4 +124,5 @@ if st.button('Predict'):
         get(text)
 
    else:
-    st.title('Warning:Enter Symptoms')
+       st.title('Sorry:Enter Your Symptoms')
+
